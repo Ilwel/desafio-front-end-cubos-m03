@@ -9,9 +9,15 @@ import { useForm } from 'react-hook-form';
 
 export default function SimpleCard({ title, simpleInputs, passwordInputs, buttons, footerMessage }) {
   const classes = useStyles();
-  const { handleSubmit, register } = useForm();
+  const { handleSubmit, register, formState:{ errors }, setError } = useForm();
 
-  function registerUser(data){
+  function registerUser(data) {
+    const { senha, repitaSenha } = data;
+    if(senha !== repitaSenha ){
+      setError('senha', { type:'validate'}, { shouldFocus: true})
+      setError('repitaSenha', { type:'validate'}, { shouldFocus: false})
+      return;
+    }
     console.log(data);
 
   }
@@ -24,10 +30,31 @@ export default function SimpleCard({ title, simpleInputs, passwordInputs, button
         </Typography>
         <form className={classes.form} onSubmit={handleSubmit(registerUser)}>
 
-          {simpleInputs.map(item => <TextField {...item} register = {() => register(item.id)} key={item.id}/>)}
-          {passwordInputs.map(item => <PasswordInput {...item} register = {() => register(item.id)} key={item.id}/>)}
+          {simpleInputs.map(item => 
+          <TextField
+            {...item}
+            register={() => register(item.id, { required: true })}
+            key={item.id}
+            error={!!errors[item.id]}
+          />
+          )}
+          
+          {passwordInputs.map(item => 
+          <PasswordInput
+            {...item}
+            register={() => register(item.id, { required: true })}
+            key={item.id}
+            error={!!errors[item.id]}
+          />
+          )}
+
           <div className={classes.buttons}>
-            {buttons.map(item => <Button {...item} key={item.id}/>)}
+            {buttons.map(item => 
+            <Button
+              {...item}
+              key={item.id}
+            />
+            )}
           </div>
 
           <Typography className={classes.footer} color="textPrimary" gutterBottom>

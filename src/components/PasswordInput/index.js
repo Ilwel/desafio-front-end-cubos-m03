@@ -8,7 +8,7 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import IconButton from '@material-ui/core/IconButton';
 import useStyles from './styles';
 
-export default function PasswordInput({label, id, register}) {
+export default function PasswordInput({label, id, register, error}) {
 
     const classes = useStyles();
 
@@ -27,7 +27,7 @@ export default function PasswordInput({label, id, register}) {
     return (
 
         <FormControl className={classes.root}>
-            <InputLabel htmlFor={id}>{label}</InputLabel>
+            <InputLabel htmlFor={id} error={error}>{label}</InputLabel>
             <Input
                 id={id}
                 type={values.showPassword ? 'text' : 'password'}
@@ -43,6 +43,7 @@ export default function PasswordInput({label, id, register}) {
                         </IconButton>
                     </InputAdornment>
                 }
+                error={error}
                 {...register()}
             ></Input>
         </FormControl>
