@@ -17,8 +17,8 @@ export default function SimpleCard({ title, simpleInputs, passwordInputs, button
         </Typography>
         <form className={classes.form} noValidate autoComplete="off">
 
-          {simpleInputs.map(item => <TextField label={item} />)}
-          {passwordInputs.map(item => <PasswordInput label={item} />)}
+          {simpleInputs.map(item => <TextField {...item} />)}
+          {passwordInputs.map(item => <PasswordInput {...item} />)}
           <div className={classes.buttons}>
             {buttons.map(item => <Button type={item.type} color={item.color} content={item.content} />)}
           </div>

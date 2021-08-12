@@ -4,11 +4,11 @@ import TextField from '@material-ui/core/TextField';
 
 
 
-export default function MyTextField({ label }) {
+export default function MyTextField({ label, id }) {
 
     const classes = useStyles();
 
     return (
-        <TextField id="standard-basic" label={label} className={classes.root}/>
+        <TextField id={id} label={label} className={classes.root}/>
     );
 }
