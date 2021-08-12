@@ -8,7 +8,7 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import IconButton from '@material-ui/core/IconButton';
 import useStyles from './styles';
 
-export default function PasswordInput({label, id}) {
+export default function PasswordInput({label, id, register}) {
 
     const classes = useStyles();
 
@@ -43,6 +43,7 @@ export default function PasswordInput({label, id}) {
                         </IconButton>
                     </InputAdornment>
                 }
+                {...register()}
             ></Input>
         </FormControl>
 
