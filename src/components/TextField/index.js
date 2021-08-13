@@ -4,7 +4,7 @@ import TextField from '@material-ui/core/TextField';
 
 
 
-export default function MyTextField({ label, id, register, error }) {
+export default function MyTextField({ label, id, register, error, type }) {
 
     const classes = useStyles();
 
@@ -15,6 +15,7 @@ export default function MyTextField({ label, id, register, error }) {
             className={classes.root}
             {...register()}
             error={error}
+            type={type}
         />
     );
 }
