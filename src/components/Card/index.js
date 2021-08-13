@@ -3,27 +3,96 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Snackbar from '@material-ui/core/Snackbar';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import useStyles from './styles';
 import TextField from '../TextField';
 import PasswordInput from '../PasswordInput';
 import Button from '../Button';
 import Alert from '../Alert';
 import { useForm } from 'react-hook-form';
+import { useHistory } from 'react-router';
+import makeUrl from '../../environment'
+import { useContext } from 'react';
+import AuthContext from '../../contexts/AuthContext';
 
-export default function SimpleCard({ title, simpleInputs, passwordInputs, buttons, footerMessage }) {
+export default function SimpleCard({ title, simpleInputs, passwordInputs, buttons, footerMessage, typeCard }) {
   const classes = useStyles();
+  const history = useHistory();
+  const [loading, setLoading] = useState(false);
   const { handleSubmit, register, formState: { errors }, setError } = useForm();
   const [open, setOpen] = useState(false);
+  const [apiError, setApiError] = useState('');
+  const { setToken } = useContext(AuthContext);
 
-  function registerUser(data) {
+  async function registerUser(data) {
     const { senha, repitaSenha } = data;
 
-    if (senha !== repitaSenha) {
-      setError('senha', { type: 'validate' }, { shouldFocus: true })
-      setError('repitaSenha', { type: 'validate' }, { shouldFocus: false })
-      return;
+    setLoading(true);
+
+    if (typeCard === "register") {
+
+      if (senha !== repitaSenha) {
+        setError('senha', { type: 'validate' }, { shouldFocus: true })
+        setError('repitaSenha', { type: 'validate' }, { shouldFocus: false })
+        return;
+      }
+
+      setApiError('');
+
+      const res = await fetch(makeUrl('usuarios'), {
+        method: "POST",
+        body: JSON.stringify({
+          nome: data.seuNome,
+          email: data.email,
+          senha: data.senha,
+          nome_loja: data.nomeLoja
+        }),
+        headers: {
+          'Content-type': 'application/json',
+        }
+      })
+
+      setLoading(false);
+
+      const resData = await res.json();
+      console.log(resData);
+      if (res.ok) {
+        history.push('/login')
+        return;
+      }
+
+      setApiError(resData);
+
+    } else if (typeCard === "login") {
+
+      setApiError('');
+
+      const res = await fetch(makeUrl('login'), {
+        method: "POST",
+        body: JSON.stringify({
+          email: data.email,
+          senha: data.senha,
+        }),
+        headers: {
+          'Content-type': 'application/json',
+        }
+      })
+
+      setLoading(false);
+
+      const resData = await res.json();
+      console.log(resData);
+      if (res.ok) {
+        setToken(resData.token);
+        history.push('/produtos')
+        return;
+      }
+
+      setApiError(resData);
+
     }
-    console.log(data);
+
 
   }
 
@@ -35,9 +104,15 @@ export default function SimpleCard({ title, simpleInputs, passwordInputs, button
     if (reason === 'clickaway') {
       return;
     }
-
     setOpen(false);
   };
+
+  const apiErrorClose = () => {
+
+    setOpen(false);
+    setApiError('');
+
+  }
 
   let fillAllFields = false
   const allIds = simpleInputs.map(item => item.id).concat(passwordInputs.map(item => item.id))
@@ -56,7 +131,7 @@ export default function SimpleCard({ title, simpleInputs, passwordInputs, button
           {simpleInputs.map(item =>
             <TextField
               {...item}
-              register={() => register(item.id, { required: true,})}
+              register={() => register(item.id, { required: true, })}
               key={item.id}
               error={!!errors[item.id]}
               type={item.id === "email" ? item.id : ""}
@@ -71,7 +146,7 @@ export default function SimpleCard({ title, simpleInputs, passwordInputs, button
               error={!!errors[item.id]}
             />
           )}
-          
+
           {fillAllFields &&
             (
               <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
@@ -83,10 +158,20 @@ export default function SimpleCard({ title, simpleInputs, passwordInputs, button
           }
 
           {errors?.senha?.type === "validate" &&
-            
+
             <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
               <Alert onClose={handleClose} severity="error">
                 As senhas devem ser iguais
+              </Alert>
+            </Snackbar>
+
+          }
+
+          {apiError &&
+
+            <Snackbar open={open} autoHideDuration={4000} onClose={apiErrorClose}>
+              <Alert onClose={apiErrorClose} severity="error">
+                {apiError}
               </Alert>
             </Snackbar>
 
@@ -102,6 +187,12 @@ export default function SimpleCard({ title, simpleInputs, passwordInputs, button
               />
             )}
           </div>
+
+
+          <Backdrop className={classes.backdrop} open={loading}>
+            <CircularProgress color="inherit" />
+          </Backdrop>
+
 
           <Typography className={classes.footer} color="textPrimary" gutterBottom>
             {footerMessage}

@@ -4,7 +4,7 @@ const useStyles = makeStyles((theme) => ({
     root: {
         height: "60%",
         width: 392,
-        borderRadius:16
+        borderRadius: 16
     },
     title: {
         fontSize: 32,
@@ -22,12 +22,16 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         gap: 20
     },
-    footer:{
-        fontSize:14
+    footer: {
+        fontSize: 14
     },
-    alert:{
-        margin:0
-    }
+    alert: {
+        margin: 0
+    },
+    backdrop: {
+        zIndex: theme.zIndex.drawer + 1,
+        color: '#fff',
+    },
 }));
 
 export default useStyles;
