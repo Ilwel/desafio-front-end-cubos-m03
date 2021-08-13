@@ -19,12 +19,14 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'center'
     },
     buttons: {
-        marginTop: 40,
         display: 'flex',
         gap: 20
     },
     footer:{
         fontSize:14
+    },
+    alert:{
+        margin:0
     }
 }));
 
