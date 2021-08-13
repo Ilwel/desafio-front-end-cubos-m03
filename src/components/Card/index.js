@@ -35,6 +35,7 @@ export default function SimpleCard({ title, simpleInputs, passwordInputs, button
       if (senha !== repitaSenha) {
         setError('senha', { type: 'validate' }, { shouldFocus: true })
         setError('repitaSenha', { type: 'validate' }, { shouldFocus: false })
+        setLoading(false);
         return;
       }
 
